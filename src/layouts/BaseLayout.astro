@@ -1,0 +1,138 @@
+---
+import '@fontsource/jetbrains-mono/latin-400.css';
+import '@fontsource/jetbrains-mono/latin-500.css';
+import '@fontsource/jetbrains-mono/latin-600.css';
+import { resolveSocialImage } from '../utils/socialImage';
+
+interface Props {
+  title: string;
+  description?: string;
+  canonicalUrl?: string;
+  /** e.g. `noindex` for error pages */
+  metaRobots?: string;
+  jsonLd?: Record<string, unknown>;
+  openGraphType?: 'website' | 'article';
+  articlePublishedTime?: string;
+  /** Absolute image URL; defaults to `/og-default.png` on `site` when omitted */
+  socialImageUrl?: string;
+}
+
+const {
+  title,
+  description,
+  canonicalUrl,
+  metaRobots,
+  jsonLd,
+  openGraphType = 'website',
+  articlePublishedTime,
+  socialImageUrl: socialImageUrlProp,
+} = Astro.props;
+
+const pageTitle = title === 'mach5' ? title : `${title} - mach5`;
+const jsonLdText =
+  jsonLd &&
+  JSON.stringify(jsonLd).replace(/</g, '\\u003c');
+
+const site = Astro.site;
+const assetRoot = site ? new URL(import.meta.env.BASE_URL, site) : undefined;
+const socialImageUrl =
+  socialImageUrlProp ??
+  (assetRoot ? resolveSocialImage(assetRoot, undefined, '/og-default.png') : undefined);
+
+const base = import.meta.env.BASE_URL;
+const faviconHref = `${base}favicon.svg`;
+const rssHref = `${base}rss.xml`;
+
+const twitterCard = socialImageUrl ? 'summary_large_image' : 'summary';
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{pageTitle}</title>
+  {metaRobots && <meta name="robots" content={metaRobots} />}
+  {description && <meta name="description" content={description} />}
+  {canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
+  <meta property="og:site_name" content="mach5" />
+  <meta property="og:title" content={pageTitle} />
+  {description && <meta property="og:description" content={description} />}
+  {canonicalUrl && <meta property="og:url" content={canonicalUrl} />}
+  <meta property="og:type" content={openGraphType} />
+  {socialImageUrl && <meta property="og:image" content={socialImageUrl} />}
+  <meta property="og:locale" content="en_US" />
+  {articlePublishedTime && (
+    <meta property="article:published_time" content={articlePublishedTime} />
+  )}
+  <meta name="twitter:card" content={twitterCard} />
+  <meta name="twitter:title" content={pageTitle} />
+  {description && <meta name="twitter:description" content={description} />}
+  {socialImageUrl && <meta name="twitter:image" content={socialImageUrl} />}
+  <link rel="icon" href={faviconHref} type="image/svg+xml" />
+  <link rel="alternate" type="application/rss+xml" title="mach5" href={rssHref} />
+  {jsonLdText && (
+    <script type="application/ld+json" set:html={jsonLdText} />
+  )}
+</head>
+<body>
+  <div class="container">
+    <slot />
+  </div>
+</body>
+</html>
+
+<style is:global>
+  @import '../styles/global.css';
+</style>
+
+<script>
+  const isReturn = performance.getEntriesByType?.('navigation').some(
+    (e) => (e as PerformanceNavigationTiming).type === 'back_forward'
+  );
+
+  function initTypewriterHeader() {
+    const header = document.querySelector('.site-header h1, .post-header h1');
+    if (!header) return;
+
+    if (isReturn || window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) {
+      header.classList.add('no-anim');
+      return;
+    }
+
+    const text = header.textContent!;
+    header.textContent = '';
+    header.classList.add('split-flap');
+
+    Array.from(text).forEach(function (ch, i) {
+      const span = document.createElement('span');
+      span.className = 'split-flap-char';
+      if (ch === ' ') span.classList.add('split-flap-space');
+      if (/\p{Extended_Pictographic}/u.test(ch)) span.classList.add('wave-emoji');
+      span.style.animationDelay = (i * 20) + 'ms';
+      span.textContent = ch;
+      header.appendChild(span);
+    });
+  }
+
+  function initPostListReveal() {
+    const items = document.querySelectorAll('.post-list li');
+    if (!items.length) return;
+
+    const reduced = isReturn || window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    if (reduced) {
+      items.forEach(function (item) { item.classList.add('reveal-in'); });
+      return;
+    }
+
+    items.forEach(function (item, index) {
+      item.classList.add('reveal-init');
+      setTimeout(function () {
+        item.classList.add('reveal-in');
+      }, 120 + index * 80);
+    });
+  }
+
+  initTypewriterHeader();
+  initPostListReveal();
+</script>

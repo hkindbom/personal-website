@@ -1,0 +1,69 @@
+# Builds the Astro static site and publishes dist/ to GitHub Pages.
+# Enable Pages in the repo: Settings > Pages > Source: GitHub Actions.
+#
+# Project sites (this repo is not <user>.github.io) are served from /repo-name/.
+# The job sets SITE_URL and BASE_PATH so links, RSS, and assets resolve correctly.
+
+name: Deploy GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Resolve site URL and base path
+        id: pages
+        shell: bash
+        env:
+          REPOSITORY: ${{ github.repository }}
+        run: |
+          OWNER="${REPOSITORY%%/*}"
+          REPO="${REPOSITORY#*/}"
+          if [ "$REPO" = "${OWNER}.github.io" ]; then
+            echo "site=https://${OWNER}.github.io" >> "$GITHUB_OUTPUT"
+            echo "base=/" >> "$GITHUB_OUTPUT"
+          else
+            echo "site=https://${OWNER}.github.io/${REPO}" >> "$GITHUB_OUTPUT"
+            echo "base=/${REPO}/" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - run: npm ci
+      - run: npm test
+      - run: npm run build
+        env:
+          SITE_URL: ${{ steps.pages.outputs.site }}
+          BASE_PATH: ${{ steps.pages.outputs.base }}
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

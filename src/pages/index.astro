@@ -1,0 +1,62 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+import { getCollection } from 'astro:content';
+
+const posts = (await getCollection('posts'))
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+
+const now = new Date();
+const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+
+function formatDate(date: Date) {
+  return date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+}
+
+const site = Astro.site;
+const homeDescription =
+  'Software engineer and aviation enthusiast in London. Writing on code, cameras, and planespotting.';
+const canonicalUrl = site ? new URL(import.meta.env.BASE_URL, site).href : undefined;
+const postHref = (slug: string) => `${import.meta.env.BASE_URL}posts/${slug}`;
+---
+
+<BaseLayout title="mach5" description={homeDescription} canonicalUrl={canonicalUrl}>
+  <header class="site-header">
+    <h1>Hi! I'm Hannes <span class="wave-emoji" aria-hidden="true">👋</span></h1>
+    <p class="site-bio">
+      <span class="bio-line">I'm a software engineer and aviation enthusiast based in London.</span>
+      <span class="bio-line">I'm currently building an <a href="#">XYZ</a>.</span>
+      <span class="bio-line">I mostly write this blog for myself as a way to explore ideas - if anything here interests you, I'd love to hear from you!</span>
+    </p>
+  </header>
+
+  <hr class="cta-separator" />
+
+  <section class="posts-panel">
+    <div class="posts-heading-row">
+      <h2 class="posts-heading">Recent Posts</h2>
+      <span class="posts-count">{posts.length} entries</span>
+    </div>
+
+    <ul class="post-list">
+      {posts.map((post) => (
+        <li>
+          <a href={postHref(post.slug)}>
+            <span class="post-main">
+              <span class="post-title">{post.data.title}</span>
+              <span class="post-excerpt">{post.data.excerpt}</span>
+            </span>
+            <span class="post-right">
+              <span class="post-date">{formatDate(post.data.date)}</span>
+              {post.data.date > thirtyDaysAgo && (
+                <span class="post-badge">NEW</span>
+              )}
+            </span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </section>
+
+  <SiteFooter />
+</BaseLayout>

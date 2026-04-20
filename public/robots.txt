@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://mach5.blog/sitemap-index.xml

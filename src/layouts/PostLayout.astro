@@ -1,0 +1,307 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+import { resolveSocialImage } from '../utils/socialImage';
+
+interface Props {
+  title: string;
+  date: Date;
+  excerpt: string;
+  wordCount: number;
+  readingTime: number;
+  image?: string;
+  demo?: string;
+}
+
+const { title, date, excerpt, wordCount, readingTime, image, demo } = Astro.props;
+
+const formattedDate = date.toLocaleDateString('en-US', {
+  month: 'short',
+  year: 'numeric',
+});
+
+const site = Astro.site;
+const assetRoot = site ? new URL(import.meta.env.BASE_URL, site) : undefined;
+const canonicalUrl = site ? new URL(Astro.url.pathname, site).href : Astro.url.href;
+const personId = assetRoot
+  ? new URL('#person', assetRoot).href
+  : `${canonicalUrl}#person`;
+const socialImageUrl = assetRoot ? resolveSocialImage(assetRoot, image) : undefined;
+
+const jsonLd = site && assetRoot
+  ? {
+      '@context': 'https://schema.org',
+      '@graph': [
+        {
+          '@type': 'Person',
+          '@id': personId,
+          name: 'Sam Lader',
+          url: assetRoot.href,
+        },
+        {
+          '@type': 'BlogPosting',
+          '@id': `${canonicalUrl}#article`,
+          headline: title,
+          description: excerpt,
+          datePublished: date.toISOString(),
+          url: canonicalUrl,
+          ...(socialImageUrl && { image: socialImageUrl }),
+          wordCount,
+          author: { '@id': personId },
+          publisher: { '@id': personId },
+          mainEntityOfPage: {
+            '@type': 'WebPage',
+            '@id': canonicalUrl,
+          },
+        },
+      ],
+    }
+  : undefined;
+---
+
+<BaseLayout
+  title={title}
+  description={excerpt}
+  canonicalUrl={canonicalUrl}
+  jsonLd={jsonLd}
+  openGraphType="article"
+  articlePublishedTime={date.toISOString()}
+  socialImageUrl={socialImageUrl}
+>
+  <header class="post-header">
+    <a href={import.meta.env.BASE_URL} class="home-link-top">&larr; Home</a>
+    <h1>{title}</h1>
+    <div class="post-date">
+      {formattedDate}
+      <span class="post-meta"> - {readingTime} min read - {wordCount.toLocaleString()} words</span>
+    </div>
+  </header>
+
+  <article class="post-body" id="post-body" data-demo={demo}>
+    <slot />
+  </article>
+
+  <hr class="cta-separator" />
+
+  <a href={import.meta.env.BASE_URL} class="back-link">&larr; Back</a>
+
+  <SiteFooter />
+</BaseLayout>
+
+<script>
+  function slugify(text: string) {
+    return (text || '')
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9\s-]/g, '')
+      .replace(/\s+/g, '-')
+      .replace(/-+/g, '-');
+  }
+
+  function copyText(text: string): Promise<void> {
+    if (navigator.clipboard && window.isSecureContext) {
+      return navigator.clipboard.writeText(text);
+    }
+    return new Promise(function (resolve, reject) {
+      try {
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.setAttribute('readonly', '');
+        ta.style.position = 'fixed';
+        ta.style.left = '-9999px';
+        document.body.appendChild(ta);
+        ta.select();
+        ta.setSelectionRange(0, ta.value.length);
+        const ok = document.execCommand('copy');
+        document.body.removeChild(ta);
+        if (ok) resolve();
+        else reject(new Error('copy failed'));
+      } catch (err) {
+        reject(err);
+      }
+    });
+  }
+
+  function initHeadingCopyLinks() {
+    const headers = document.querySelectorAll('.post-body h2');
+    if (!headers.length) return;
+
+    const used: Record<string, boolean> = Object.create(null);
+
+    headers.forEach(function (h2) {
+      const base = slugify(h2.textContent!) || 'section';
+      let id = base;
+      let n = 2;
+      while (used[id] || document.getElementById(id)) {
+        id = base + '-' + n;
+        n += 1;
+      }
+      used[id] = true;
+      h2.id = id;
+
+      const a = document.createElement('a');
+      a.href = '#' + id;
+      a.className = 'heading-anchor';
+      a.setAttribute('aria-label', 'Copy link to this section');
+      a.textContent = '#';
+      a.addEventListener('click', function () {
+        const url = location.origin + location.pathname + '#' + id;
+        copyText(url).catch(function () {});
+      });
+
+      h2.appendChild(a);
+    });
+  }
+
+  function initReadingProgress() {
+    const postBody = document.querySelector('.post-body');
+    if (!postBody) return;
+
+    const bar = document.createElement('div');
+    bar.className = 'reading-progress';
+    document.body.appendChild(bar);
+
+    function update() {
+      const bodyRect = postBody!.getBoundingClientRect();
+      const start = window.scrollY + bodyRect.top;
+      const end = start + (postBody as HTMLElement).offsetHeight;
+      const viewport = window.innerHeight;
+      const denom = end - start - viewport;
+      let progress = denom <= 0 ? 1 : (window.scrollY - start) / denom;
+      progress = Math.max(0, Math.min(1, progress));
+      bar.style.transform = 'scaleX(' + progress + ')';
+    }
+
+    update();
+    window.addEventListener('scroll', update, { passive: true });
+    window.addEventListener('resize', update);
+  }
+
+  function initContentReveal() {
+    const elems = document.querySelectorAll('.post-body p, .post-body h2, .post-body ul, .post-body pre');
+    if (!elems.length) return;
+
+    const reduced = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    if (reduced || !('IntersectionObserver' in window)) {
+      elems.forEach(function (el) { el.classList.add('seen'); });
+      return;
+    }
+
+    const io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('seen');
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -6% 0px' });
+
+    elems.forEach(function (el) {
+      if (el.getBoundingClientRect().top < window.innerHeight) {
+        el.classList.add('reveal-block', 'seen');
+      } else {
+        el.classList.add('reveal-block');
+        io.observe(el);
+      }
+    });
+  }
+
+  function initCodeBlockInteractions() {
+    const blocks = document.querySelectorAll('.post-body pre');
+    if (!blocks.length) return;
+
+    blocks.forEach(function (pre) {
+      pre.classList.add('code-ready');
+      pre.addEventListener('click', function () {
+        const text = pre.textContent || '';
+        if (!text.trim()) return;
+
+        copyText(text).then(function () {
+          pre.classList.add('copied');
+          setTimeout(function () { pre.classList.remove('copied'); }, 900);
+        }).catch(function () {
+          pre.classList.add('copy-failed');
+          setTimeout(function () { pre.classList.remove('copy-failed'); }, 1200);
+        });
+      });
+    });
+  }
+
+  initHeadingCopyLinks();
+  initReadingProgress();
+  initContentReveal();
+  initCodeBlockInteractions();
+
+  // ─── Article-specific visual demos ─────────────────
+  // All demo containers are pre-rendered in the markdown to avoid layout shift.
+  // The JS below just finds them by ID and starts the animation loops.
+
+  function setupCanvas(canvas: HTMLCanvasElement) {
+    const ctx = canvas.getContext('2d')!;
+    const dpr = Math.max(1, window.devicePixelRatio || 1);
+    const cssW = canvas.clientWidth || canvas.width;
+    const cssH = canvas.clientHeight || canvas.height;
+    canvas.width = Math.round(cssW * dpr);
+    canvas.height = Math.round(cssH * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    return { ctx, w: cssW, h: cssH };
+  }
+
+  // Lissajous sweep
+  (function () {
+    const canvas = document.querySelector<HTMLCanvasElement>('#demo-lissajous-sweep canvas');
+    if (!canvas) return;
+    let t = 0;
+    const trail: number[][] = [];
+
+    function frame() {
+      const c = setupCanvas(canvas);
+      const ctx = c.ctx, w = c.w, h = c.h;
+      const cx = w / 2, cy = h / 2;
+      const ax = w * 0.42, ay = h * 0.36;
+
+      const x = cx + ax * Math.sin(3 * t);
+      const y = cy + ay * Math.sin(7 * t);
+      trail.push([x, y]);
+      if (trail.length > 1200) trail.shift();
+
+      ctx.fillStyle = '#0d1117';
+      ctx.fillRect(0, 0, w, h);
+
+      ctx.strokeStyle = 'rgba(139,148,158,0.12)';
+      for (let gx = 0; gx <= 6; gx++) {
+        const px = (gx / 6) * w;
+        ctx.beginPath(); ctx.moveTo(px, 0); ctx.lineTo(px, h); ctx.stroke();
+      }
+      for (let gy = 0; gy <= 4; gy++) {
+        const py = (gy / 4) * h;
+        ctx.beginPath(); ctx.moveTo(0, py); ctx.lineTo(w, py); ctx.stroke();
+      }
+
+      ctx.strokeStyle = 'rgba(139,148,158,0.35)';
+      ctx.beginPath();
+      ctx.moveTo(cx, 0); ctx.lineTo(cx, h);
+      ctx.moveTo(0, cy); ctx.lineTo(w, cy);
+      ctx.stroke();
+
+      for (let i = 1; i < trail.length; i++) {
+        const p0 = trail[i - 1], p1 = trail[i];
+        const alpha = i / trail.length;
+        ctx.strokeStyle = 'rgba(63,185,80,' + (alpha * 0.45).toFixed(3) + ')';
+        ctx.lineWidth = 1.5;
+        ctx.beginPath(); ctx.moveTo(p0[0], p0[1]); ctx.lineTo(p1[0], p1[1]); ctx.stroke();
+      }
+
+      ctx.fillStyle = '#3fb950';
+      ctx.beginPath(); ctx.arc(x, y, 4.2, 0, Math.PI * 2); ctx.fill();
+
+      ctx.fillStyle = '#8b949e';
+      ctx.font = '12px SFMono-Regular, Consolas, monospace';
+      ctx.fillText('x = sin(3t), y = sin(7t)', 10, 18);
+
+      t += 0.013;
+      requestAnimationFrame(frame);
+    }
+    frame();
+  })();
+</script>

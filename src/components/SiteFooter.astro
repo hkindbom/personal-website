@@ -1,0 +1,21 @@
+
+---
+interface Props {
+  rssHref?: string;
+  message?: string;
+  rssLabel?: string;
+}
+
+const {
+  rssHref = `${import.meta.env.BASE_URL}rss.xml`,
+  message = 'Logbook updated periodically. Follow RSS',
+  rssLabel = 'here',
+} = Astro.props;
+---
+
+<footer class="site-footer">
+  <span class="footer-text">
+    <span class="footer-blink">&gt;</span>
+    {message} <a href={rssHref} class="footer-rss" data-astro-prefetch="false">{rssLabel}</a>.
+  </span>
+</footer>

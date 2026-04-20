@@ -1,0 +1,76 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+import { getCollection } from 'astro:content';
+
+const latestPosts = (await getCollection('posts'))
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
+  .slice(0, 8);
+
+function formatDate(date: Date) {
+  return date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+}
+
+const homeHref = import.meta.env.BASE_URL;
+const postHref = (slug: string) => `${import.meta.env.BASE_URL}posts/${slug}`;
+---
+
+<BaseLayout
+  title="Not found"
+  description="The page you requested is not on this logbook."
+  metaRobots="noindex"
+>
+  <header class="post-header not-found-header">
+    <a href={homeHref} class="home-link-top">&larr; Home</a>
+    <p class="not-found-code" aria-hidden="true">404</p>
+    <h1>Nothing on this frequency</h1>
+    <p class="not-found-copy">
+      No route matched that URL.
+    </p>
+  </header>
+
+  <hr class="cta-separator" />
+
+  <h2 class="posts-heading">Latest posts</h2>
+
+  <ul class="post-list">
+    {latestPosts.map((post) => (
+      <li>
+        <a href={postHref(post.slug)}>
+          <span class="post-main">
+            <span class="post-title">{post.data.title}</span>
+            <span class="post-excerpt">{post.data.excerpt}</span>
+          </span>
+          <span class="post-right">
+            <span class="post-date">{formatDate(post.data.date)}</span>
+          </span>
+        </a>
+      </li>
+    ))}
+  </ul>
+
+  <SiteFooter message="Back to" rssLabel="mach5" rssHref={homeHref} />
+</BaseLayout>
+
+<style>
+  .not-found-header {
+    margin-bottom: 2rem;
+  }
+
+  .not-found-code {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    color: #6e7681;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+  }
+
+  .not-found-copy {
+    margin-top: 0.65rem;
+    color: var(--text-secondary, #8b949e);
+    font-size: 0.875rem;
+    line-height: 1.65;
+    max-width: 36em;
+  }
+</style>
