@@ -11,7 +11,7 @@ function normalizeBase(path) {
 const site =
   process.env.SITE_URL?.trim() ||
   process.env.PUBLIC_SITE_URL?.trim() ||
-  'https://example.com';
+  'https://hanneskindbom.com';
 const base = normalizeBase(
   process.env.BASE_PATH?.trim() ||
     process.env.PUBLIC_BASE_PATH?.trim() ||
