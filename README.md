@@ -20,7 +20,7 @@ npm test          # smoke tests
 
 ## Customize
 
-- **`astro.config.mjs`** — default `site` is `https://mach5.blog`; override with `SITE_URL` / `BASE_PATH` for GitHub project pages (see `.env.example`).
+- **`astro.config.mjs`** — default `site` is `https://example.com`; override with `SITE_URL` / `BASE_PATH` for GitHub project pages (see `.env.example`).
 - **`src/content/`** — blog posts and config.
 - **`.github/workflows/deploy-github-pages.yml`** — optional static deploy to GitHub Pages (enable Pages → Source: GitHub Actions).
 

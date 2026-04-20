@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import astroConfig from '../astro.config.mjs';
 
 test('astro config keeps site metadata and performance defaults', () => {
-  assert.equal(astroConfig.site, 'https://mach5.blog');
+  assert.equal(astroConfig.site, 'https://example.com');
   assert.equal(astroConfig.base, '/');
   assert.equal(astroConfig.output, 'static');
   assert.deepEqual(astroConfig.prefetch, {

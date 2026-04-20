@@ -28,7 +28,7 @@ const {
   socialImageUrl: socialImageUrlProp,
 } = Astro.props;
 
-const pageTitle = title === 'mach5' ? title : `${title} - mach5`;
+const pageTitle = title === 'hannes' ? title : `${title} - hannes`;
 const jsonLdText =
   jsonLd &&
   JSON.stringify(jsonLd).replace(/</g, '\\u003c');
@@ -55,7 +55,7 @@ const twitterCard = socialImageUrl ? 'summary_large_image' : 'summary';
   {metaRobots && <meta name="robots" content={metaRobots} />}
   {description && <meta name="description" content={description} />}
   {canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
-  <meta property="og:site_name" content="mach5" />
+  <meta property="og:site_name" content="hannes" />
   <meta property="og:title" content={pageTitle} />
   {description && <meta property="og:description" content={description} />}
   {canonicalUrl && <meta property="og:url" content={canonicalUrl} />}
@@ -70,7 +70,7 @@ const twitterCard = socialImageUrl ? 'summary_large_image' : 'summary';
   {description && <meta name="twitter:description" content={description} />}
   {socialImageUrl && <meta name="twitter:image" content={socialImageUrl} />}
   <link rel="icon" href={faviconHref} type="image/svg+xml" />
-  <link rel="alternate" type="application/rss+xml" title="mach5" href={rssHref} />
+  <link rel="alternate" type="application/rss+xml" title="hannes" href={rssHref} />
   {jsonLdText && (
     <script type="application/ld+json" set:html={jsonLdText} />
   )}
