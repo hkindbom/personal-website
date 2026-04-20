@@ -1,104 +1,52 @@
 ---
-title: "The Lissajous Sweep"
-date: 2026-03-15
-excerpt: "Why a 3:7 sweep pattern works well for camera movement validation."
-demo: "lissajous"
+title: "Two Weeks in Japan"
+date: 2026-04-15
+excerpt: "Notes from a first trip to Japan — Tokyo, Kyoto, and the bits in between."
 ---
 
-Before I trusted my tracker to point the camera at real aircraft, I had an obvious problem. Debugging the tracker and debugging the gimbal at the same time was a bad idea. The arc-second unit conversion, the tilt-before-pan byte order, or the clamping logic could all be wrong, and if I tested everything at once I would not know which layer had failed.
+I spent two weeks in Japan in March and came back with a full camera roll and a strong opinion about convenience stores.
 
-So I wrote a test that made the camera do something visually obvious. I wanted a sweep I could watch and reason about without needing a target in frame, with full-range coverage, smooth movement, and a pattern distinctive enough that wrong behaviour would stand out immediately.
+## Tokyo
 
-<section class="demo-card" id="demo-lissajous-sweep">
-<h3>3:7 Lissajous sweep</h3>
-<canvas class="demo-canvas" style="height:280px"></canvas>
-</section>
+I flew into Haneda and took the monorail into the city. The first thing that hit me was how quiet the trains are. Not just the rolling stock — the passengers. Coming from London, the silence felt almost theatrical.
 
-That pattern is a [Lissajous figure](https://en.wikipedia.org/wiki/Lissajous_curve), with two axes driven by independent sine waves at different frequencies.
+Shinjuku is overwhelming in the best way. I spent most of my first day just walking around, getting lost in the backstreets behind the station. The density of tiny restaurants, each seating maybe six people, is something you have to see in person. I ate tonkotsu ramen at a place with no English menu and a ticket machine at the door. One of the best meals of the trip.
 
-## What the Sweep Is Doing
+Shibuya, Akihabara, Asakusa — the usual hits. But the neighbourhood I kept going back to was Shimokitazawa. It has a secondhand-everything culture: vinyl, clothes, furniture, books. Feels like a village inside a megacity.
 
-For the camera, pan follows one sine wave and tilt follows another. Both start at zero phase. If the periods were the same, the camera would trace the same diagonal forever, which is useless for coverage testing. With different periods, the two waves drift in and out of phase and the path slowly fills in.
+## Getting Around
 
-```python
-pan  = PAN_ARC  * math.sin(2 * math.pi * t / PAN_PERIOD)
-tilt = tilt0 + TILT_ARC * math.sin(2 * math.pi * t / TILT_PERIOD)
-```
+The rail system is as good as everyone says. I got a 14-day Japan Rail Pass and it paid for itself on the first shinkansen ride. Tokyo to Kyoto in 2 hours 15 minutes, smooth enough to balance a coffee on the tray table.
 
-`PAN_PERIOD` is 30 seconds. `TILT_PERIOD` is 70 seconds. The ratio 30/70 = 3/7, so the pattern does repeat eventually, but only after a relatively long cycle. In practice that gives broad coverage before the path closes and starts retracing.
+IC cards (Suica/Pasmo) work on almost everything — trains, buses, convenience stores, vending machines. Tap and go. London's contactless system is good but Japan's coverage is broader.
 
-If you chose a simpler ratio like 1:2 or 2:3, you would get a closed figure much sooner and the camera would spend more of its time redrawing it. Those patterns close sooner, which makes them worse for coverage testing. A 3:7 ratio keeps the sweep useful for longer.
+One thing I was not prepared for: how much walking you do. My phone tracked 20-25k steps most days. Comfortable shoes are not optional.
 
-## The Terminal Display
+## Kyoto
 
-While it runs, I wanted to see what the camera was actually doing without switching to the video feed. So the script draws a little ASCII grid in the terminal, updated in place.
+Kyoto is the counterweight to Tokyo. Where Tokyo is steel and neon, Kyoto is wood and stone. I stayed near the Philosopher's Path and walked it at sunrise before the crowds arrived. In March the plum blossoms were out and the cherry blossoms were just starting.
 
-<div class="terminal-demo" id="demo-terminal">
-<div class="terminal-demo-title">Live terminal display (same coordinate mapping as the script)</div>
-<div class="terminal-screen" style="min-height:18.9em"></div>
-</div>
+Fushimi Inari is the one with the thousand torii gates. Everyone says go early. I went at 6am and had the first section almost to myself. By 9am it was packed. The full loop up the mountain takes about two hours and most tourists turn back after the first viewpoint, so the upper sections stay quiet.
 
-The `●` is the current camera position. The grid has axis lines through zero so you can see where centre is. Each frame, it moves the cursor up by the grid height and overwrites the previous frame in place, so there is no scrolling.
+Arashiyama's bamboo grove is beautiful but tiny — you walk through it in five minutes. The monkey park up the hill behind it is more interesting. You climb for 20 minutes and at the top there are macaques wandering around freely, with a panoramic view of Kyoto behind them.
 
-```python
-up = len(lines)
-print(f"\033[{up}A" + "\n".join(lines), flush=True)
-```
+## Food
 
-`\033[{up}A` is an ANSI escape sequence that moves the cursor up by `up` lines. Then the script prints the new frame on top. Simple animation without `curses`.
+The food deserves its own section. Some highlights:
 
-The grid is 50 columns wide and 9 rows tall. I picked those numbers to fit comfortably in a standard terminal without taking over the screen. Each column is about 6.8 degrees of pan, and each row about 4.4 degrees of tilt, enough resolution to confirm that the gimbal is moving in the right direction and reaching the right extremes.
+- Conveyor belt sushi in Tokyo for about £1.50 per plate. Quality that would cost five times as much in London.
+- Matcha everything in Kyoto. Matcha ice cream, matcha latte, matcha kit-kats. I am now the kind of person who has opinions about matcha grades.
+- Konbini (convenience store) food. A 7-Eleven onigiri at midnight is unreasonably good. The egg sandwiches are famous for a reason.
+- Okonomiyaki in Osaka on a day trip. A savoury pancake loaded with cabbage, pork, and sauce, cooked on a hotplate in front of you.
 
-## The Timing Loop
+## What I Would Do Differently
 
-At 5 Hz, each iteration has a 200 ms budget. The USB round-trip to send a pan/tilt command takes about 20 ms. I want to sleep for whatever is left rather than sleeping a fixed 200 ms and letting the USB overhead accumulate.
+Two weeks felt right for a first trip, but I would redistribute the time. I spent too long in Tokyo and not enough in the smaller cities. Next time I would add Kanazawa and Hiroshima, and spend a night or two in a ryokan (traditional inn) somewhere rural.
 
-```python
-interval = 1.0 / UPDATE_HZ
-t0 = time.monotonic()
+I would also learn more Japanese before going. I got by with English and Google Translate, but basic phrases open doors. The few times I managed to order or ask for directions in Japanese, people visibly appreciated the effort.
 
-while not stopped:
-    t = time.monotonic() - t0
-    pan  = PAN_ARC  * math.sin(2 * math.pi * t / PAN_PERIOD)
-    tilt = tilt0 + TILT_ARC * math.sin(2 * math.pi * t / TILT_PERIOD)
+## The Takeaway
 
-    cam.set_pan_tilt_degrees(pan, tilt)
-    draw(pan, tilt, ...)
+Japan is one of those places where the gap between expectation and reality tilts in reality's favour. The trains run on time, the food is extraordinary, and the culture of consideration — for public space, for other people's time, for small details — is something I think about a lot now that I am back.
 
-    elapsed = time.monotonic() - t0 - t
-    remaining = interval - elapsed
-    if remaining > 0:
-        time.sleep(remaining)
-```
-
-`t` is measured at the top of the loop before the USB call. `elapsed` is how long the loop body actually took. `remaining` is the budget minus what was spent. If a USB call takes longer than usual, which happens occasionally when the kernel UVC driver reclaims the device mid-cycle, the next iteration starts immediately rather than falling behind.
-
-This also means the position computation uses a consistent `t` relative to `t0`, not a timestamp taken after the USB call. The sine waves stay phase-coherent regardless of jitter in the command round-trip.
-
-## Ctrl+C Handling
-
-Because the sweep covers the full gimbal range, stopping it abruptly leaves the camera pointing somewhere arbitrary. I wanted Ctrl+C to return the camera to wherever it started.
-
-```python
-def stop_and_restore() -> None:
-    nonlocal stopped
-    stopped = True
-    cam.set_pan_tilt_degrees(pan0, tilt0)
-    time.sleep(3)
-
-signal.signal(signal.SIGINT, handle_sigint)
-```
-
-`pan0` and `tilt0` are read from the camera at startup with `get_pan_tilt_degrees()`. On Ctrl+C, the script sends the camera back to that position and waits 3 seconds for the gimbal to physically get there before printing the final confirmed position and exiting.
-
-The `time.sleep(3)` is a guess. The gimbal takes roughly 2-3 seconds to traverse its full range at default speed. Waiting 3 seconds is usually enough. An alternative would be to poll `get_pan_tilt_degrees()` until it is close enough to the target, but the sleep is simpler and has worked every time I have used it.
-
-## What I Learned From It
-
-The sweep caught two bugs before I started on the tracker proper.
-
-First, pan and tilt were swapped in the SET payload. Sending `pan=30, tilt=10` was physically producing tilt=30, pan=10. This is the tilt-before-pan byte order documented in my [reverse engineering post](/posts/reverse-engineering-the-insta360-link). I had read it correctly from the USB captures but put it back together wrong. Watching the ASCII grid move sideways when I expected up/down made it obvious immediately.
-
-Second, the degree-to-arc-second conversion had a sign error on tilt. Positive tilt should move the camera up; I had it going down. Again, immediately obvious on the grid, not at all obvious from reading the code.
-
-Neither of these would have been easy to catch by pointing at a specific aircraft, because either one could have looked like a coordinate geometry mistake higher up the stack. The sweep worked because it isolated the gimbal control layer from the rest of the tracker and reduced the problem to something simple enough to see.
+I am already looking at flights for next spring.

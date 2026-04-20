@@ -15,17 +15,17 @@ function formatDate(date: Date) {
 
 const site = Astro.site;
 const homeDescription =
-  'Software engineer and aviation enthusiast in London. Writing on code, cameras, and planespotting.';
+  'Software engineer in London. Writing about travel and building AI systems.';
 const canonicalUrl = site ? new URL(import.meta.env.BASE_URL, site).href : undefined;
 const postHref = (slug: string) => `${import.meta.env.BASE_URL}posts/${slug}`;
 ---
 
-<BaseLayout title="mach5" description={homeDescription} canonicalUrl={canonicalUrl}>
+<BaseLayout title="hannes" description={homeDescription} canonicalUrl={canonicalUrl}>
   <header class="site-header">
     <h1>Hi! I'm Hannes <span class="wave-emoji" aria-hidden="true">👋</span></h1>
     <p class="site-bio">
-      <span class="bio-line">I'm a software engineer and aviation enthusiast based in London.</span>
-      <span class="bio-line">I'm currently building an <a href="#">XYZ</a>.</span>
+      <span class="bio-line">I'm an AI engineer based in London, interested in travel and building AI systems.</span>
+      <span class="bio-line">I currently work at <a href="https://9fin.com">9fin</a>. Find me on <a href="https://www.linkedin.com/in/hanneskindbom">LinkedIn</a>.</span>
       <span class="bio-line">I mostly write this blog for myself as a way to explore ideas - if anything here interests you, I'd love to hear from you!</span>
     </p>
   </header>

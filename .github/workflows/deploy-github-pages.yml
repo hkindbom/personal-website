@@ -26,22 +26,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Resolve site URL and base path
-        id: pages
-        shell: bash
-        env:
-          REPOSITORY: ${{ github.repository }}
-        run: |
-          OWNER="${REPOSITORY%%/*}"
-          REPO="${REPOSITORY#*/}"
-          if [ "$REPO" = "${OWNER}.github.io" ]; then
-            echo "site=https://${OWNER}.github.io" >> "$GITHUB_OUTPUT"
-            echo "base=/" >> "$GITHUB_OUTPUT"
-          else
-            echo "site=https://${OWNER}.github.io/${REPO}" >> "$GITHUB_OUTPUT"
-            echo "base=/${REPO}/" >> "$GITHUB_OUTPUT"
-          fi
-
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
@@ -50,9 +34,6 @@ jobs:
       - run: npm ci
       - run: npm test
       - run: npm run build
-        env:
-          SITE_URL: ${{ steps.pages.outputs.site }}
-          BASE_PATH: ${{ steps.pages.outputs.base }}
 
       - uses: actions/upload-pages-artifact@v3
         with:
