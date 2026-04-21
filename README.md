@@ -1,29 +1,12 @@
-# Astro static blog
+# hanneskindbom.com
 
-Minimal [Astro](https://astro.build/) 5 starter: content collections, RSS, sitemap, static output, and a GitHub Pages workflow. Fork or clone and replace branding, copy, and posts with your own.
+Personal blog built with [Astro](https://astro.build/).
 
-Created as a gift to Hannes.
-
-## Requirements
-
-- Node.js 22 (same as the GitHub Actions workflow)
-
-## Quick start
+## Development
 
 ```bash
 npm install
-make dev          # dev server with hot reload
-make              # production build → dist/
-make serve        # preview dist/ locally
-npm test          # smoke tests
+make dev     # dev server
+make         # production build
+npm test     # tests
 ```
-
-## Customize
-
-- **`astro.config.mjs`** — default `site` is `https://hanneskindbom.com`; override with `SITE_URL` / `BASE_PATH` for GitHub project pages (see `.env.example`).
-- **`src/content/`** — blog posts and config.
-- **`.github/workflows/deploy-github-pages.yml`** — optional static deploy to GitHub Pages (enable Pages → Source: GitHub Actions).
-
-## License
-
-Use however you like after you fork it.
