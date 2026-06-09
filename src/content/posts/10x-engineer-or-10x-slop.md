@@ -4,12 +4,6 @@ date: 2026-06-09
 excerpt: "Claude code will implement your bad ideas too"
 ---
 
----
-
-## title: "10x Engineer or 10x Slop?"
-date: 2026-05-29
-excerpt: "Claude code will implement your bad ideas too"
-
 My team at 9fin just launched an AI chat agent that we've worked on for the last few months. Some of the initial customer feedback kind of blew my mind. Users repeatedly say it’s really impressive and usage metrics are strong.
 
 I've built machine learning powered products for 8 years and expectations on AI are sky-high, causing most products to fall short of them. It’s not because I’m a bad engineer, but because the bar has moved faster than the tech. So when feedback like this lands, it’s worth paying attention and sharing some learnings.
