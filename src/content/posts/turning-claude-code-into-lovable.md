@@ -1,5 +1,5 @@
 ---
-title: "Lovable's phone loop, without Lovable"
+title: "Turning Claude Code into Lovable"
 date: 2026-10-04
 excerpt: "Iterating on an app from my phone with Claude Code and private Cloudflare previews"
 ---
@@ -43,7 +43,7 @@ if (isKTH(p) && s.universities.includes("KTH"))
 
 Then half a prompt into my first follow-up, I'd used up all my free daily credits, and the build "paused", asking me to pay more.
 
-![Lovable's "Upgrade to keep building" pop-up](/images/lovable-phone-loop/lovable-paywall.jpg)
+![Lovable's "Upgrade to keep building" pop-up](/images/turning-claude-code-into-lovable/lovable-paywall.jpg)
 
 That surprised me. The first build is the moment a new user decides whether the product is magic or not. I'd expect Lovable to put its strongest model on it to impress, even on the free tier.
 
@@ -73,9 +73,9 @@ I disconnected the app from Lovable and asked Claude Code to help me move it to 
 5. Not right? I prompt again, Claude pushes, a new preview builds.
 6. Happy? I tell Claude to merge, and the prod domain updates.
 
-![The app on my phone](/images/lovable-phone-loop/app-on-phone.jpg)
+![The app on my phone](/images/turning-claude-code-into-lovable/app-on-phone.jpg)
 
-![The Cloudflare Access login in front of a preview](/images/lovable-phone-loop/cloudflare-access-login.jpg)
+![The Cloudflare Access login in front of a preview](/images/turning-claude-code-into-lovable/cloudflare-access-login.jpg)
 
 Compared to Simon's trick, every branch gets its own preview URL automatically, previews are private, and production lives on my own domain. Getting there had a few snags worth knowing about:
 
