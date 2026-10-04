@@ -1,0 +1,9 @@
+{
+  // Cloudflare Workers Builds: private branch previews only.
+  // Production stays on GitHub Pages (.github/workflows/deploy-github-pages.yml).
+  "name": "personal-website",
+  "compatibility_date": "2026-10-01",
+  "assets": { "directory": "./dist" },
+  // Required by `wrangler preview`.
+  "previews": {}
+}
