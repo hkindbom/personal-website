@@ -43,7 +43,7 @@ if (isKTH(p) && s.universities.includes("KTH"))
 }
 ```
 
-Then half a prompt into my first follow-up, I'd used up all my free daily credits, and the build "paused", asking me to pay more.
+Then half a prompt into my first follow-up, I'd used up all 5 of my free daily credits, and the build "paused", asking me to pay more.
 
 ![Lovable's "Upgrade to keep building" pop-up](/images/turning-claude-code-into-lovable/lovable-paywall.jpg)
 
