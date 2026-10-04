@@ -99,7 +99,7 @@ An honest comparison per dollar is hard: Lovable sells credits, and Anthropic on
 
 One real number: the Claude Code session that moved my app off Lovable, set up Cloudflare and shipped two pull requests would have cost about £3 at API prices. I already pay for Claude, so it cost me nothing extra. The only thing I've paid Cloudflare so far is my domain, about £8 for a year.
 
-**The backend is where Lovable earns its money.** Lovable Cloud gives every project a managed database, auth, storage and server functions, built on Supabase. It also comes with ready-made integrations, like payments with Stripe and LLM calls through Lovable's built-in AI gateway. My app doesn't need a database yet, and I haven't tested a backend in this loop. Cloudflare has its own database (D1), key-value store (KV) and file storage (R2), all with free tiers. You could also point Claude at Supabase, or at AWS if you want to own your infrastructure. In every case you set it up and manage the secrets yourself, including any Stripe or LLM keys.
+**The backend is where Lovable earns its money.** Lovable Cloud gives every project a managed database, auth, storage and server functions, built on Supabase. It also comes with ready-made integrations, like [payments with Stripe](https://docs.lovable.dev/integrations/stripe) and LLM calls through Lovable's built-in AI gateway. My app doesn't need a database yet, and I haven't tested a backend in this loop. Cloudflare has its own database (D1), key-value store (KV) and file storage (R2), all with free tiers. You could also point Claude at Supabase, or at AWS if you want to own your infrastructure. In every case you set it up and manage the secrets yourself, including any Stripe or LLM keys.
 
 Other drawbacks to be honest about:
 
