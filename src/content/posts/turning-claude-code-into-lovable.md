@@ -18,6 +18,8 @@ I started in chat mode on the free plan and had a long back-and-forth about the 
 
 The one-shot result was honestly a bit sloppy. The UI mixed Swedish and English, and it didn't feel like the long planning chat before it had made much difference.
 
+![The one-shot app, in Lovable's phone editor](/images/turning-claude-code-into-lovable/app-on-phone.jpg)
+
 Under the hood, the matching "engine" was a pile of hard-coded if statements and magic numbers, overfitted to KTH:
 
 ```ts
@@ -73,8 +75,6 @@ I disconnected the app from Lovable and asked Claude Code to help me move it to 
 5. Not right? I prompt again, Claude pushes, a new preview builds.
 6. Happy? I tell Claude to merge, and the prod domain updates.
 
-![The app on my phone](/images/turning-claude-code-into-lovable/app-on-phone.jpg)
-
 ![The Cloudflare Access login in front of a preview](/images/turning-claude-code-into-lovable/cloudflare-access-login.jpg)
 
 Compared to Simon's trick, every branch gets its own preview URL automatically, previews are private, and production lives on my own domain. Getting there had a few snags worth knowing about:
@@ -83,28 +83,28 @@ Compared to Simon's trick, every branch gets its own preview URL automatically, 
 - **The empty `previews` block.** The first preview build failed until `wrangler.jsonc` had a `"previews": {}` entry.
 - **"Disconnected from your Git account".** Cloudflare showed the repo as linked but never built my branch. The fix was granting the Cloudflare GitHub app access to that repo.
 
-Once it worked, I moved this blog onto the same loop with one small pull request, and drafted this post that way. Production stays on GitHub Pages; Cloudflare only builds the private previews.
+Once it worked, I moved this blog onto the same loop with one small pull request, and drafted this post that way.
 
 ## Limits, costs and drawbacks
 
-An honest comparison per dollar is hard: Lovable sells credits, and Anthropic doesn't publish exact Claude usage limits. Here are the list prices:
+An honest comparison per dollar is hard: Lovable sells credits, and Anthropic only gives rough Claude usage limits. Here are the list prices:
 
 | | Lovable | My setup |
 | --- | --- | --- |
-| AI | Pro: $25/month for 100 credits plus 5 a day ([pricing](https://lovable.dev/pricing)) | Claude Pro: $20/month, includes Claude Code, limits shared with chat ([pricing](https://claude.com/pricing)) |
+| AI | Pro: £22/month for 100 credits ([pricing](https://lovable.dev/pricing)) | Claude Pro: £18/month, includes Claude Code, limits shared with chat ([pricing](https://claude.com/pricing)) |
 | Hosting | Included | Cloudflare free plan: 100,000 requests a day, static files free ([limits](https://developers.cloudflare.com/workers/platform/pricing/)) |
 | Builds | Included | 3,000 build minutes a month, one at a time ([limits](https://developers.cloudflare.com/workers/ci-cd/builds/limits-and-pricing/)) |
 | Private previews | Built into the editor | Cloudflare Access, free up to 50 users |
 | Custom domain | Included on Pro | One domain you own covers every app as a subdomain, or use a free `workers.dev` URL |
 
-One real number: the Claude Code session that moved my app off Lovable, set up Cloudflare and shipped two pull requests would have cost about $3.70 at API prices. I already pay for Claude, so it cost me nothing extra.
+One real number: the Claude Code session that moved my app off Lovable, set up Cloudflare and shipped two pull requests would have cost about £3 at API prices. I already pay for Claude, so it cost me nothing extra. The only thing I've paid Cloudflare so far is my domain, about £8 for a year.
 
-**The backend is where Lovable earns its money.** Lovable Cloud gives every project a managed database, auth, storage and server functions, built on Supabase. My app doesn't need a database yet, and I haven't tested a backend in this loop. Cloudflare has its own database (D1), key-value store (KV) and file storage (R2), all with free tiers. You could also point Claude at Supabase, or at AWS if you want to own your infrastructure. In every case you set it up and manage the secrets yourself.
+**The backend is where Lovable earns its money.** Lovable Cloud gives every project a managed database, auth, storage and server functions, built on Supabase. It also comes with ready-made integrations, like payments with Stripe and LLM calls through Lovable's built-in AI gateway. My app doesn't need a database yet, and I haven't tested a backend in this loop. Cloudflare has its own database (D1), key-value store (KV) and file storage (R2), all with free tiers. You could also point Claude at Supabase, or at AWS if you want to own your infrastructure. In every case you set it up and manage the secrets yourself, including any Stripe or LLM keys.
 
 Other drawbacks to be honest about:
 
 - **Slower previews.** Each push takes about a minute to reach a preview. Lovable shows changes in seconds, and Simon's GitHub Pages trick in about 30.
-- **No visual editor.** Every change goes through a prompt and a build, with nothing to click on in the preview.
+- **No visual editor.** In Lovable you can select an element in the preview and adjust it directly. Here every change goes through a prompt and a build.
 - **Setup takes dashboards.** Cloudflare settings, GitHub app permissions and a custom domain took about an hour of back-and-forth, with Claude walking me through each screen.
 - **Shared usage limits.** Heavy coding days eat into the same Claude limits as my normal chats.
 
