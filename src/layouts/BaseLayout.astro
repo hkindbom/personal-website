@@ -28,6 +28,9 @@ const {
   socialImageUrl: socialImageUrlProp,
 } = Astro.props;
 
+// Cloudflare preview builds (WORKERS_CI is set there, never on GitHub Pages) must not be indexed.
+const robots = process.env.WORKERS_CI ? 'noindex, nofollow' : metaRobots;
+
 const pageTitle = title === 'hannes' ? title : `${title} - hannes`;
 const jsonLdText =
   jsonLd &&
@@ -52,7 +55,7 @@ const twitterCard = socialImageUrl ? 'summary_large_image' : 'summary';
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{pageTitle}</title>
-  {metaRobots && <meta name="robots" content={metaRobots} />}
+  {robots && <meta name="robots" content={robots} />}
   {description && <meta name="description" content={description} />}
   {canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
   <meta property="og:site_name" content="hannes" />
