@@ -60,7 +60,7 @@ The credits stung, but they made me think about what I was actually paying for. 
 
 **Claude artifacts** were my first stop. They're great for quick one-off pages, but the code doesn't sync to GitHub, and that was the one thing I wasn't willing to give up.
 
-Then I remembered Simon Willison's [Raccoon Heist post](https://simonwillison.net/2026/Aug/5/raccoon-heist/). He builds from the Claude iPhone app and previews with GitHub Pages: point Pages at the branch Claude pushes to, and each push is live within about 30 seconds. It's simple and fast, and great for throwaway projects. But it doesn't give you password-protected previews, and you still probably want to pay for your own domain. If you already have one, a subdomain does the job.
+Then I remembered Simon Willison's [Raccoon Heist post](https://simonwillison.net/2026/Aug/5/raccoon-heist/). He builds from the Claude iPhone app and previews with GitHub Pages: point Pages at the branch Claude pushes to, and each push is live within about 30 seconds. It's simple and fast, and great for throwaway projects. But every new branch means going back to Settings, choosing "Deploy from a branch", picking the branch and hitting Save. It also doesn't give you password-protected previews, and you still probably want to pay for your own domain. If you already have one, a subdomain does the job.
 
 ## The setup
 
