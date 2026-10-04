@@ -92,8 +92,8 @@ An honest comparison per dollar is hard: Lovable sells credits, and Anthropic on
 | | Lovable | My setup |
 | --- | --- | --- |
 | AI | Pro: £22/month for 100 credits ([pricing](https://lovable.dev/pricing)) | Claude Pro: £18/month, includes Claude Code, limits shared with chat ([pricing](https://claude.com/pricing)) |
-| Hosting | Included | Cloudflare free plan: 100,000 requests a day, static files free ([limits](https://developers.cloudflare.com/workers/platform/pricing/)) |
-| Builds | Included | 3,000 build minutes a month, one at a time ([limits](https://developers.cloudflare.com/workers/ci-cd/builds/limits-and-pricing/)) |
+| Hosting | Publishing is in the plan; Cloud usage (database, functions) uses credits | Cloudflare free plan: 100,000 requests a day, static files free ([limits](https://developers.cloudflare.com/workers/platform/pricing/)) |
+| Builds | Every change uses credits | 3,000 build minutes a month, one at a time ([limits](https://developers.cloudflare.com/workers/ci-cd/builds/limits-and-pricing/)) |
 | Private previews | Built into the editor | Cloudflare Access, free up to 50 users |
 | Custom domain | Included on Pro | One domain you own covers every app as a subdomain, or use a free `workers.dev` URL |
 
