@@ -83,7 +83,7 @@ Compared to Simon's trick, every branch gets its own preview URL automatically, 
 - **The empty `previews` block.** The first preview build failed until `wrangler.jsonc` had a `"previews": {}` entry.
 - **"Disconnected from your Git account".** Cloudflare showed the repo as linked but never built my branch. The fix was granting the Cloudflare GitHub app access to that repo.
 
-Once it worked, I moved this blog onto the same loop with one small pull request, and drafted this post that way.
+Once it worked, I moved this blog onto the same loop with [one small pull request](https://github.com/hkindbom/personal-website/pull/2), and drafted this post that way.
 
 ## Limits, costs and drawbacks
 
