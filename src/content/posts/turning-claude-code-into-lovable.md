@@ -6,11 +6,11 @@ excerpt: "Iterating on an app from my phone with Claude Code and private Cloudfl
 
 I recently listened to Anton Osika on [Framgångspodden](https://youtu.be/mqAECkZqdRQ) and it took me back. Some time in 2021 we went for lunch in Stockholm, back when he was CTO at Depict.
 
-Since then he co-founded Lovable, which crossed [$100M ARR eight months after launch](https://techcrunch.com/2025/07/23/eight-months-in-swedish-unicorn-lovable-crosses-the-100m-arr-milestone), allegedly the fastest climb to that number in software history. Whatever you think of vibe coding, Lovable has clearly democratised building web apps, and lots of people love it.
+Since then he co-founded Lovable, which crossed [$100M ARR eight months after launch](https://techcrunch.com/2025/07/23/eight-months-in-swedish-unicorn-lovable-crosses-the-100m-arr-milestone), allegedly [the fastest climb to that number in software history](https://tech.eu/2025/07/23/lovable-becomes-fastest-software-company-ever-to-reach-100m-arr/). Whatever you think of vibe coding, Lovable has clearly democratised building web apps, and lots of people love it.
 
 It was more than a year since I first tried Lovable, so I thought I'd give it another go and vibe away. I had a basic app idea: make it easier for students to find scholarships and automatically draft the applications.
 
-This post is about how I found it, and the setup I ended up with instead. It keeps the part of Lovable I liked most, iterating from my phone, while reusing my Claude subscription and personal domain, and staying in control of both code and infra. Let's dive in.
+This post is about my second experience with Lovable, and the setup I ended up with instead. It keeps the part of Lovable I liked most, iterating from my phone, while reusing my Claude subscription and personal domain, and staying in control of both code and infra. Let's dive in.
 
 ## First impressions
 
