@@ -34,7 +34,7 @@ if (!s.universities.includes("any") && s.universities.includes("KTH") && !isKTH(
 let score = 50;
 if (isKTH(p) && s.universities.includes("KTH"))
   reasons.push(L("Open to KTH students", "Öppet för KTH-studenter"));
-// ...
+// GPA check
 } else if (p.gpa < s.minGpa) {
   score -= 25;
 } else {
@@ -112,7 +112,7 @@ Other drawbacks to be honest about:
 
 Not necessarily. If you don't want to touch GitHub or a Cloudflare dashboard, or manage your own infrastructure, Lovable is still the fastest way from idea to live app, and that's exactly why so many people love it. The managed backend is a real feature, not a gimmick.
 
-But if you already pay for Claude and want to own your infrastructure, this setup gives you the part of Lovable I cared about most, the phone-only loop, for close to nothing.
+But if you already pay for Claude and want to own your infrastructure, this setup gives you the part of Lovable I cared about most, the phone-only loop, for close to nothing extra.
 
 Cheers,
 Hannes Kindbom
